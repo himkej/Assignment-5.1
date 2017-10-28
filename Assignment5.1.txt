@@ -1,0 +1,32 @@
+First we need to load the employee_details.txt into Pig table
+
+emp_with_rating = emp_with_rating = LOAD 'employee_details' USING PigStorage(',') AS (emp_id:int, emp_name:chararray, emp_salary:int, emp_rating:int);
+
+1)
+emp_order = ORDER emp_with_rating by emp_rating;
+emp_top_five = LIMIT emp_order 5;
+emp_top_five = foreach emp_top_five generate emp_id,emp_name;
+dump emp_top_five
+2)
+emp_odd_id = filter emp_with_rating by (emp_id%2==1)
+emp_odd_id_sorted = order emp_odd_id by emp_salary desc,emp_name;
+emp_odd_id_sorted = foreach emp_odd_id_sorted generate emp_id,emp_name;
+dump emp_id_sorted
+3)
+
+emp_expenses = LOAD 'employee_expenses' AS (emp_id:int, expenses:int);
+joined_data = join emp by emp_id , emp_expenses by emp_id;
+maximum_expenses = order maximum_expenses by expenses desc,emp_name;
+maximum_expenses  = foreach maximum_expenses  generate emp_id,emp_name;
+dump maximum_expenses
+
+4)
+joined_data = join emp by emp_id , emp_expenses by emp_id;
+joined_data  = foreach joined_data  generate emp_id,emp_name;
+
+5)
+
+join_data = join emp by emp_id left outer, emp_expenses by emp_id;
+join_data_sorted = filter join_data by (expenses is  null)
+join_data_sorted  = foreach join_data_sorted  generate emp_id,emp_name;
+dump join_data_sorted
